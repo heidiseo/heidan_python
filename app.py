@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+
 import os
 
 # Init app
@@ -17,8 +18,19 @@ db = SQLAlchemy(app)
 # Init marshmallow
 ma = Marshmallow(app)
 
+# Activity Schema
+class ActivitySchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'name', 'location', 'description', 'cost', 'complete')
+
+# Init schema
+activity_schema = ActivitySchema()
+
+activities_schema = ActivitySchema(many=True)
+
 # Product Class/Model
 class Activity(db.Model):
+    __tablename__ = 'activity'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
     location = db.Column(db.String(300))
@@ -32,16 +44,6 @@ class Activity(db.Model):
         self.description = description
         self.cost = cost
         self.complete = complete
-
-# Activity Schema
-class ActivitySchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'name', 'location', 'description', 'cost', 'complete')
-
-# Init schema
-activity_schema = ActivitySchema()
-
-activities_schema = ActivitySchema(many=True)
 
 # Create an Activity
 @app.route('/activity', methods=['POST'])
