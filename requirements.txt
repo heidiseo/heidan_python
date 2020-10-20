@@ -8,6 +8,7 @@ filelock==3.0.12
 Flask==1.1.2
 flask_script==2.0.6
 flask_migrate==2.5.3
+flask_marshmallow==0.14.0
 gunicorn==20.0.4
 idna==2.10
 itsdangerous==1.1.0
