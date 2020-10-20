@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from sqlalchemy.sql.expression import false
 
 import os
 
@@ -68,6 +69,15 @@ def get_activities():
     result = activities_schema.dump(all_activities)
     return jsonify(result)
 
+# Get ALL complete activities
+@app.route('/activity/<complete>', methods=['GET'])
+def get_activities_by_complete_status(complete):
+    # complete_bool = str_to_bool(complete)
+    all_activities = Activity.query.filter(str(Activity.complete) == complete).all()
+    # import pdb; pdb.set_trace()
+    result = activities_schema.dump(all_activities)
+    return jsonify(all_activities)
+
 # Get A Single activitiy
 @app.route('/activity/<id>', methods=['GET'])
 def get_activity(id):
@@ -102,6 +112,14 @@ def delete_activity(id):
     db.session.delete(activity)
     db.session.commit()
     return activity_schema.jsonify(activity)
+
+def str_to_bool(str):
+    if str == 'true':
+        return True
+    elif str == 'false':
+        return False
+    else:
+        return False
 
 # Run Server
 if __name__ == '__main__':
