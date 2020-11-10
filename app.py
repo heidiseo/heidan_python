@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from sqlalchemy.sql.expression import false
-
+from flask_cors import CORS, cross_origin
 import os
 
 # Init app
 app = Flask(__name__)
+CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Database
@@ -48,6 +48,7 @@ class Activity(db.Model):
 
 # Create an Activity
 @app.route('/activity', methods=['POST'])
+@cross_origin()
 def add_activity():
     name = request.json['name']
     location = request.json['location']
@@ -63,29 +64,24 @@ def add_activity():
     return activity_schema.jsonify(new_activity)
 
 # Get ALL activities
-@app.route('/activity', methods=['GET'])
+@app.route('/activities', methods=['GET'])
+@cross_origin()
 def get_activities():
     all_activities = Activity.query.all()
     result = activities_schema.dump(all_activities)
     return jsonify(result)
 
-# Get ALL complete activities
-@app.route('/activity/<complete>', methods=['GET'])
-def get_activities_by_complete_status(complete):
-    # complete_bool = str_to_bool(complete)
-    all_activities = Activity.query.filter(str(Activity.complete) == complete).all()
-    # import pdb; pdb.set_trace()
-    result = activities_schema.dump(all_activities)
-    return jsonify(all_activities)
 
 # Get A Single activitiy
 @app.route('/activity/<id>', methods=['GET'])
+@cross_origin()
 def get_activity(id):
     activity = Activity.query.get(id)
     return activity_schema.jsonify(activity)
 
 # Update an activity
 @app.route('/activity/<id>', methods=['PUT'])
+@cross_origin()
 def update_activity(id):
     activity = Activity.query.get(id)
 
@@ -107,19 +103,12 @@ def update_activity(id):
 
 # Delete an activity
 @app.route('/activity/<id>', methods=['DELETE'])
+@cross_origin()
 def delete_activity(id):
     activity = Activity.query.get(id)
     db.session.delete(activity)
     db.session.commit()
     return activity_schema.jsonify(activity)
-
-def str_to_bool(str):
-    if str == 'true':
-        return True
-    elif str == 'false':
-        return False
-    else:
-        return False
 
 # Run Server
 if __name__ == '__main__':

@@ -10,6 +10,7 @@ flask_script==2.0.6
 flask_migrate==2.5.3
 flask_marshmallow==0.14.0
 flask_sqlalchemy==2.4.4
+Flask_Cors==3.0.9
 gunicorn==20.0.4
 idna==2.10
 itsdangerous==1.1.0
